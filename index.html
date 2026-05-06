@@ -552,6 +552,50 @@ textarea:focus {
 
 }
 
+.input-with-action {
+  display: flex;
+  gap: 6px;
+}
+
+.input-with-action input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-auto-num {
+  flex-shrink: 0;
+  width: 42px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.btn-auto-num:hover {
+  background: var(--accent-dark);
+}
+
+.btn-adjust {
+  background: #5a6272;
+  border-color: #5a6272;
+}
+
+.btn-adjust:hover {
+  background: #3a4252;
+}
+
+.counter-badge {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
 /* Cabeçalho de imagem única */
 .doc-header.image-header {
   display: block;
@@ -629,7 +673,12 @@ textarea:focus {
               <div class="two-column">
                 <label class="field">
                   <span>N&ordm; do of&iacute;cio</span>
-                  <input id="letterNumber" type="text" value="" />
+                  <div class="input-with-action">
+                    <input id="letterNumber" type="text" value="" placeholder="000/00" />
+                    <button class="btn-auto-num" id="autoNumberButton" type="button" title="Gerar próximo número automaticamente">+1</button>
+                    <button class="btn-auto-num btn-adjust" id="adjustNumberButton" type="button" title="Ajustar contador">&#9998;</button>
+                  </div>
+                  <span class="counter-badge" id="counterBadge">Carregando...</span>
                 </label>
                 <label class="field">
                   <span>Cidade e data</span>
@@ -968,6 +1017,44 @@ function correctText() {
 
 document.querySelector("#correctButton").addEventListener("click", correctText);
 
+document.querySelector("#adjustNumberButton").addEventListener("click", async () => {
+  if (!window.__setOficioCounter) {
+    showToast("Firebase não configurado ainda.");
+    return;
+  }
+  const input = prompt("Digite o número atual do ofício (somente o número, sem o ano):\nEx: 142");
+  if (!input || isNaN(input)) return;
+  const number = parseInt(input, 10);
+  const year = new Date().getFullYear().toString().slice(-2);
+  try {
+    await window.__setOficioCounter(number, year);
+    showToast(`Contador ajustado para ${String(number).padStart(3,"0")}/${year}`);
+  } catch {
+    showToast("Erro ao ajustar o contador.");
+  }
+});
+
+document.querySelector("#autoNumberButton").addEventListener("click", async () => {
+  if (!window.__getNextOficioNumber) {
+    showToast("Firebase não configurado ainda.");
+    return;
+  }
+  const btn = document.querySelector("#autoNumberButton");
+  btn.disabled = true;
+  btn.textContent = "...";
+  try {
+    const num = await window.__getNextOficioNumber();
+    fields.letterNumber.value = num;
+    updatePreview();
+    showToast("Número gerado: " + num);
+  } catch {
+    showToast("Erro ao gerar número. Verifique a conexão.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "+1";
+  }
+});
+
 // Ativa corretor ortográfico nativo do navegador
 document.querySelectorAll("textarea, input[type='text']").forEach((el) => {
   el.setAttribute("spellcheck", "true");
@@ -976,6 +1063,58 @@ document.querySelectorAll("textarea, input[type='text']").forEach((el) => {
 
 startBlank();
 
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+  import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+  // ▼ Cole aqui os dados do seu projeto Firebase
+  const firebaseConfig = {
+    databaseURL: "https://gerador-oficios-palmeiras-default-rtdb.firebaseio.com",
+  };
+  // ▲
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  const counterRef = ref(db, "oficio_counter");
+
+  // Mostra o contador atual ao carregar
+  async function loadCurrentCounter() {
+    const { get } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js");
+    const snap = await get(counterRef);
+    const data = snap.val();
+    const badge = document.querySelector("#counterBadge");
+    if (!badge) return;
+    if (data) {
+      badge.textContent = `Atual: ${String(data.number).padStart(3, "0")}/${data.year}`;
+    } else {
+      badge.textContent = "Nenhum registro ainda";
+    }
+  }
+
+  window.__getNextOficioNumber = async function () {
+    const year = new Date().getFullYear().toString().slice(-2);
+    const result = await runTransaction(counterRef, (current) => {
+      if (!current || current.year !== year) return { number: 1, year };
+      return { number: current.number + 1, year: current.year };
+    });
+    const { number, year: yr } = result.snapshot.val();
+    const formatted = `${String(number).padStart(3, "0")}/${yr}`;
+    const badge = document.querySelector("#counterBadge");
+    if (badge) badge.textContent = `Atual: ${formatted}`;
+    return formatted;
+  };
+
+  window.__setOficioCounter = async function (number, year) {
+    const { set } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js");
+    await set(counterRef, { number, year });
+    const badge = document.querySelector("#counterBadge");
+    if (badge) badge.textContent = `Atual: ${String(number).padStart(3, "0")}/${year}`;
+  };
+
+  loadCurrentCounter();
 </script>
   </body>
 </html>
