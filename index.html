@@ -6,16 +6,20 @@
     <title>Gerador de Oficio</title>
     <style>
 :root {
-  --ink: #20242c;
-  --muted: #687080;
-  --line: #d8dde7;
+  --ink: #1a1f2b;
+  --muted: #5a6272;
+  --line: #cdd3df;
   --paper: #ffffff;
-  --panel: #f7f8fb;
-  --accent: #126d63;
-  --accent-dark: #0d514a;
-  --soft: #e8f4f2;
+  --panel: #f4f6fa;
+  --accent: #0d5c53;
+  --accent-dark: #094840;
+  --accent-light: #e6f0ee;
+  --soft: #ddecea;
   --warn: #a85d1e;
-  --shadow: 0 18px 50px rgba(20, 28, 40, 0.12);
+  --shadow: 0 4px 24px rgba(10, 30, 40, 0.13);
+  --shadow-sm: 0 2px 8px rgba(10, 30, 40, 0.08);
+  --topbar-bg: #0a3d35;
+  --topbar-border: #0d5c53;
 }
 
 * {
@@ -26,7 +30,7 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  background: #edf0f5;
+  background: #d6dbe6 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b0b8cc' fill-opacity='0.18'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -37,15 +41,76 @@ textarea {
   font: inherit;
 }
 
+/* Barra superior institucional */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+  height: 52px;
+  background: var(--topbar-bg);
+  border-bottom: 3px solid #c9a84c;
+}
+
+.topbar-flag {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.topbar-flag span {
+  display: block;
+  width: 5px;
+  height: 28px;
+  border-radius: 2px;
+}
+
+.topbar-flag .green  { background: #2d8c6e; }
+.topbar-flag .yellow { background: #c9a84c; }
+.topbar-flag .blue   { background: #1a4f8a; }
+
+.topbar-title {
+  color: #e8ede8;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.topbar-title small {
+  display: block;
+  color: #9bb8b0;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.topbar-sep {
+  flex: 1;
+}
+
+.topbar-badge {
+  padding: 3px 10px;
+  border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 4px;
+  color: #c9a84c;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .app-shell {
-  min-height: 100vh;
-  padding: 20px;
+  min-height: calc(100vh - 52px);
+  padding: 24px 20px 32px;
 }
 
 .workspace {
   display: grid;
   grid-template-columns: minmax(320px, 440px) 1fr;
-  gap: 20px;
+  gap: 22px;
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -53,16 +118,39 @@ textarea {
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: var(--shadow);
 }
 
 .controls {
   position: sticky;
-  top: 20px;
-  max-height: calc(100vh - 40px);
+  top: 24px;
+  max-height: calc(100vh - 76px);
   overflow: auto;
-  padding: 18px;
+  padding: 0;
+  border-top: 3px solid var(--accent);
+}
+
+.controls > .tabs,
+.controls > .quick-actions,
+.controls > form,
+.controls > .actions {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.controls > .tabs {
+  margin-top: 16px;
+}
+
+.brand .icon-button {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+.brand .icon-button:hover {
+  background: rgba(255,255,255,0.22);
 }
 
 .brand {
@@ -70,21 +158,31 @@ textarea {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  padding: 16px 18px 14px;
+  margin-bottom: 0;
+  background: linear-gradient(135deg, #0d5c53 0%, #0a3d35 100%);
+  border-radius: 3px 3px 0 0;
+}
+
+.brand > div {
+  flex: 1;
 }
 
 .eyebrow {
-  margin: 0 0 4px;
-  color: var(--accent);
-  font-size: 0.78rem;
+  margin: 0 0 3px;
+  color: #9bb8b0;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 h1 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.25rem;
   letter-spacing: 0;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .tabs {
@@ -430,6 +528,7 @@ textarea:focus {
     background: #fff;
   }
 
+  .topbar,
   .controls,
   .page-tools {
     display: none;
@@ -470,6 +569,19 @@ textarea:focus {
 </style>
   </head>
   <body>
+    <header class="topbar">
+      <div class="topbar-flag" aria-hidden="true">
+        <span class="green"></span>
+        <span class="yellow"></span>
+        <span class="blue"></span>
+      </div>
+      <div class="topbar-title">
+        Prefeitura Municipal de Palmeiras
+        <small>Secretaria de Educação, Esporte e Lazer</small>
+      </div>
+      <div class="topbar-sep"></div>
+      <div class="topbar-badge">Sistema Oficial</div>
+    </header>
     <main class="app-shell">
       <section class="workspace">
         <aside class="panel controls" aria-label="Dados do oficio">
