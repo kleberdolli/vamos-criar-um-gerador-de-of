@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Oficio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <aside class="panel controls" aria-label="Dados do oficio">
+          <div class="brand">
+            <div>
+              <p class="eyebrow">Documento oficial</p>
+              <h1>Gerador de Oficio</h1>
+            </div>
+            <button class="icon-button" id="printButton" type="button" title="Imprimir ou salvar em PDF" aria-label="Imprimir ou salvar em PDF">
+              <span aria-hidden="true">P</span>
+            </button>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Secoes do formulario">
+            <button class="tab active" type="button" data-tab="cabecalho">Cabecalho</button>
+            <button class="tab" type="button" data-tab="dados">Dados</button>
+            <button class="tab" type="button" data-tab="texto">Texto</button>
+          </div>
+
+          <form id="letterForm">
+            <div class="tab-panel active" data-panel="cabecalho">
+              <div class="official-header-note">
+                <img src="assets/image2.png" alt="" />
+                <div>
+                  <strong>Cabeçalho oficial aplicado</strong>
+                  <span>Brasão municipal e logotipo da Secretaria de Educação.</span>
+                </div>
+                <img src="assets/image1.jpg" alt="" />
+              </div>
+              <div class="two-column">
+                <label class="field">
+                  <span>Orgao ou instituicao</span>
+                  <input id="institution" type="text" value="PREFEITURA MUNICIPAL DE PALMEIRAS" />
+                </label>
+                <label class="field">
+                  <span>Setor</span>
+                  <input id="department" type="text" value="SECRETARIA MUNICIPAL DE EDUCAÇÃO, ESPORTE E LAZER" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Linha complementar</span>
+                <input id="headerLine" type="text" value="ESTADO DA BAHIA" />
+              </label>
+              <label class="field">
+                <span>CNPJ</span>
+                <input id="contactLine" type="text" value="CNPJ: 31.057.115/0001-46" />
+              </label>
+            </div>
+
+            <div class="tab-panel" data-panel="dados">
+              <div class="two-column">
+                <label class="field">
+                  <span>Numero do oficio</span>
+                  <input id="letterNumber" type="text" value="001/2026" />
+                </label>
+                <label class="field">
+                  <span>Cidade e data</span>
+                  <input id="placeDate" type="text" value="Salvador, 5 de maio de 2026" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Destinatario</span>
+                <input id="recipient" type="text" value="Ao Senhor Diretor" />
+              </label>
+              <label class="field">
+                <span>Cargo / orgao do destinatario</span>
+                <input id="recipientRole" type="text" value="Departamento de Infraestrutura" />
+              </label>
+              <label class="field">
+                <span>Assunto</span>
+                <input id="subject" type="text" value="Solicitacao de apoio institucional" />
+              </label>
+              <div class="two-column">
+                <label class="field">
+                  <span>Tratamento</span>
+                  <select id="salutation">
+                    <option>Senhor(a),</option>
+                    <option>Prezado(a) Senhor(a),</option>
+                    <option>Excelentissimo(a) Senhor(a),</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Tom</span>
+                  <select id="tone">
+                    <option value="formal">Formal</option>
+                    <option value="objetivo">Objetivo</option>
+                    <option value="cordial">Cordial</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="texto">
+              <label class="field">
+                <span>Pedido ou finalidade</span>
+                <textarea id="purpose" rows="4">Solicitar apoio para a realizacao de atividades administrativas e alinhamento das demandas prioritarias do setor.</textarea>
+              </label>
+              <label class="field">
+                <span>Informacoes importantes</span>
+                <textarea id="details" rows="4">A acao esta prevista para ocorrer nas proximas semanas e depende de confirmacao previa para organizacao da equipe responsavel.</textarea>
+              </label>
+              <div class="actions">
+                <button class="primary" id="generateButton" type="button">Gerar corpo por IA</button>
+                <button class="secondary" id="clearBodyButton" type="button">Limpar texto</button>
+              </div>
+              <label class="field">
+                <span>Corpo do oficio</span>
+                <textarea id="bodyText" rows="9"></textarea>
+              </label>
+              <div class="two-column">
+                <label class="field">
+                  <span>Assinante</span>
+                  <input id="signer" type="text" value="Nome do Responsavel" />
+                </label>
+                <label class="field">
+                  <span>Cargo do assinante</span>
+                  <input id="signerRole" type="text" value="Coordenador(a)" />
+                </label>
+              </div>
+            </div>
+          </form>
+        </aside>
+
+        <section class="preview-shell" aria-label="Previa do oficio">
+          <div class="page-tools">
+            <button class="secondary" id="copyButton" type="button">Copiar texto</button>
+            <button class="primary" id="downloadButton" type="button">Baixar HTML</button>
+          </div>
+          <article class="paper" id="documentPreview">
+            <header class="doc-header">
+              <img class="official-logo crest" src="assets/image2.png" alt="" />
+              <div class="header-copy">
+                <span id="headerLinePreview"></span>
+                <strong id="institutionPreview"></strong>
+                <span id="departmentPreview"></span>
+                <small id="contactLinePreview"></small>
+              </div>
+              <img class="official-logo education" src="assets/image1.jpg" alt="" />
+            </header>
+            <div class="doc-meta">
+              <p id="letterNumberPreview"></p>
+              <p id="placeDatePreview"></p>
+            </div>
+            <p class="recipient" id="recipientPreview"></p>
+            <p class="recipient-role" id="recipientRolePreview"></p>
+            <p class="subject"><strong>Assunto:</strong> <span id="subjectPreview"></span></p>
+            <p id="salutationPreview"></p>
+            <div class="doc-body" id="bodyPreview"></div>
+            <footer class="signature">
+              <div class="signature-line"></div>
+              <strong id="signerPreview"></strong>
+              <span id="signerRolePreview"></span>
+            </footer>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
