@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --ink: #20242c;
   --muted: #687080;
   --line: #d8dde7;
@@ -269,27 +269,29 @@ textarea:focus {
 
 .doc-header {
   display: grid;
-  grid-template-columns: 50px 1fr 50px;
-  gap: 8px;
+  grid-template-columns: 160px 1fr 160px;
+  gap: 10px;
   align-items: center;
-  min-height: 78px;
-  padding-bottom: 6px;
+  min-height: 150px;
+  padding-bottom: 4px;
   border-bottom: 1px solid #222;
   text-align: center;
 }
 
 .official-logo {
-  width: 46px;
-  height: 46px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
 }
 
 .official-logo.crest {
-  width: 52px;
-  height: 52px;
+  width: 160px;
+  height: 160px;
 }
 
 .official-logo.education {
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
 }
 
@@ -297,23 +299,23 @@ textarea:focus {
   display: grid;
   gap: 0;
   justify-items: center;
-  line-height: 1.08;
+  line-height: 1;
 }
 
 .header-copy strong {
-  font-size: 9pt;
+  font-size: 8pt;
   text-transform: uppercase;
 }
 
 .header-copy span {
-  font-size: 9pt;
+  font-size: 8pt;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .header-copy small {
   color: #30343a;
-  font-size: 8.5pt;
+  font-size: 7.5pt;
   font-weight: 700;
 }
 
@@ -438,3 +440,5 @@ textarea:focus {
     padding: 22mm 18mm;
   }
 }
+
+
