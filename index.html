@@ -703,6 +703,7 @@ textarea:focus {
               </label>
               <div class="actions">
                 <button class="primary" id="generateButton" type="button">Gerar corpo por IA</button>
+                <button class="secondary" id="correctButton" type="button">Corrigir texto</button>
                 <button class="secondary" id="clearBodyButton" type="button">Limpar texto</button>
               </div>
               <label class="field">
@@ -933,6 +934,45 @@ async function copyText() {
   await navigator.clipboard.writeText(getPlainText());
   showToast("Texto copiado.");
 }
+
+function correctText() {
+  let t = fields.bodyText.value;
+  if (!t.trim()) return;
+
+  // Espaços múltiplos → único (preserva quebras de linha)
+  t = t.replace(/[ \t]{2,}/g, " ");
+
+  // Espaço antes de pontuação → remove
+  t = t.replace(/ +([,\.;:!?\)])/g, "$1");
+
+  // Espaço faltando após pontuação → adiciona
+  t = t.replace(/([,;:])([^\s\n\d"'])/g, "$1 $2");
+  t = t.replace(/([.!?])([A-ZÀ-Úa-zà-ú])/g, "$1 $2");
+
+  // Capitaliza início de cada parágrafo (após quebra de linha)
+  t = t.replace(/(^|\n)([a-zà-ú])/g, (_, nl, ch) => nl + ch.toUpperCase());
+
+  // Capitaliza primeira letra após . ! ?
+  t = t.replace(/([.!?]\s+)([a-zà-ú])/g, (_, p, ch) => p + ch.toUpperCase());
+
+  // Remove espaços no fim de cada linha
+  t = t.replace(/[ \t]+$/gm, "");
+
+  // Remove linhas em branco extras (mais de 2 seguidas)
+  t = t.replace(/\n{3,}/g, "\n\n");
+
+  fields.bodyText.value = t;
+  updatePreview();
+  showToast("Texto corrigido.");
+}
+
+document.querySelector("#correctButton").addEventListener("click", correctText);
+
+// Ativa corretor ortográfico nativo do navegador
+document.querySelectorAll("textarea, input[type='text']").forEach((el) => {
+  el.setAttribute("spellcheck", "true");
+  el.setAttribute("lang", "pt-BR");
+});
 
 startBlank();
 
