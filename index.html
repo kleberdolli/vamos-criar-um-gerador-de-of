@@ -427,7 +427,8 @@ textarea:focus {
 
 @media print {
   .header-image {
-    max-height: 166px;
+    max-height: 208px;
+    width: 100%;
   }
 
   body {
@@ -452,7 +453,12 @@ textarea:focus {
     margin: 0;
     border: 0;
     box-shadow: none;
-    padding: 6mm 18mm 18mm;
+    padding: 0 18mm 18mm;
+  }
+
+  .doc-header.image-header {
+    margin-top: 0;
+    padding-top: 0;
   }
 }
 
